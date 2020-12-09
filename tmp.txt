@@ -1,0 +1,238 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<math.h>
+
+#include <windows.h>
+#include <glut.h>
+
+#define pi (2*acos(0.0))
+#include <iostream>
+#include <stdlib.h>
+#include<gl.h>
+#include <glut.h>
+#include<math.h>
+#include<cstring>
+using namespace std;
+int ballx=0;
+int bally=0;
+float opa=1.0f;
+void update(int);
+int windowHeight ;
+//VARS
+double theGlutMouseXCoordinate ;
+double theGlutMouseYCoordinate ;
+int theGlutWindowWidth = 512 ;
+int theGlutWindowHeight = 512 ;
+double mouseX ;
+double mouseY ;
+//VARS  END
+void mouseMotion(int x, int y)
+{
+    windowHeight = glutGet(GLUT_WINDOW_HEIGHT);
+    ballx = x;
+    bally = windowHeight-y;
+    //cout<<x<<", "<<windowHeight-y<<endl;
+    //cout<<x<<", "<<y<<endl;
+
+    theGlutMouseXCoordinate = x ;
+    theGlutMouseYCoordinate = y ;
+    mouseX = (theGlutMouseXCoordinate / theGlutWindowWidth) - 0.5f;
+    mouseY = (theGlutMouseYCoordinate / theGlutWindowHeight) - 0.5f;
+    cout << "["<< mouseX << "," << mouseY <<"]" << endl ;
+}
+//
+bool isColorRED = false ;
+class Point2D
+{
+public:
+    double x ;
+    double y ;
+
+    Point2D( double _x = 0 , double _y = 0 )
+    {
+        x = _x ;
+        y = _y ;
+    }
+};
+/*
+p4 --- p3
+.      .
+.      .
+.      .
+p1 --- p2
+*/
+class Square
+{
+public:
+
+    Point2D p1 ;
+    Point2D p2 ;
+    Point2D p3 ;
+    Point2D p4 ;
+
+    bool isPointInside( Point2D p )
+    {
+        cout << "hereeeeeee" << endl ;
+        bool inside = false ;
+        cout << "x = " << p.x << " y = " << p.y << endl ;
+        if( p.x >= p1.x && p.x <= p2.x && p.y >= p1.y && p.y <= p4.y ) inside = true ;
+        cout << "INSIDEEEEEEEEE = " << inside << endl << endl  << endl ;
+        return inside ;
+    }
+};
+
+//Square
+Square square1 , square2 ;
+void init()
+{
+
+    /*
+    square1.p1.x = 200 ;
+    square1.p1.y = 400 ;
+    square1.p2.x = 300 ;
+    square1.p2.y = 400 ;
+    square1.p3.x = 300 ;
+    square1.p3.y = 500 ;
+    square1.p4.x = 200 ;
+    square1.p4.y = 500 ;
+    */
+
+    /*
+    square1.p1.x = 0 ;
+    square1.p1.y = 0 ;
+    square1.p2.x = 99 ;
+    square1.p2.y = 0 ;
+    square1.p3.x = 99 ;
+    square1.p3.y = 99 ;
+    square1.p4.x = 0 ;
+    square1.p4.y = 99 ;
+    */
+    int BASE = 512 ;
+    square1.p1.x = 0 ;
+    square1.p1.y = 0 ;
+    square1.p2.x = BASE-1 ;
+    square1.p2.y = 0 ;
+    square1.p3.x = BASE-1 ;
+    square1.p3.y = BASE-1 ;
+    square1.p4.x = 0 ;
+    square1.p4.y = BASE-1 ;
+
+
+    /*
+    sqaure2.p1.x = 200 ;
+    sqaure2.p1.y = 200 ;
+    sqaure2.p2.x = 200 ;
+    sqaure2.p2.y = 200 ;
+    sqaure2.p3.x = 200 ;
+    sqaure2.p3.y = 200 ;
+    sqaure2.p4.x = 200 ;
+    sqaure2.p4.y = 200 ;
+    */
+
+}
+
+void mouse(int button, int state, int x, int y)
+{
+    if ( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )   // Pause/resume
+    {
+        y = windowHeight - y ;
+        if( square1.isPointInside(Point2D(x,y)) ) // if mouse click is inside the square
+        {
+
+            opa=0.0f;
+            update(0);
+
+            isColorRED = !isColorRED ;
+
+        }
+    }
+}
+
+void drawSquare( Square sq )
+{
+    if(isColorRED) glColor3f (1, 0, 0);
+    else glColor3f (0, 0, 1); //BLUE
+
+    glPushMatrix();
+    {
+
+        glTranslatef(10,10,0) ;
+        glBegin(GL_QUADS);
+        {
+            glVertex2i(sq.p1.x,sq.p1.y);
+            glVertex2i(sq.p2.x,sq.p2.y);
+            glVertex2i(sq.p3.x,sq.p3.y);
+            glVertex2i(sq.p4.x,sq.p4.y);
+
+        }
+        glEnd();
+    }
+    glPopMatrix();
+
+}
+
+//MYCODE START
+//ID = [0,15] ;
+
+void drawSquareFromID( int sid )
+{
+
+}
+
+//MYCODE END
+void myDisplay(void)
+{
+
+    glClear (GL_COLOR_BUFFER_BIT);
+
+    drawSquare(square1) ;
+
+    /*
+    glColor4f (0.8, 0.4, 0.8,opa);
+    glPointSize(4.0);
+    glBegin(GL_QUADS);
+    glVertex2i(200,500);
+    glVertex2i(300,500);
+    glVertex2i(300,400);
+    glVertex2i(200,400);
+    glEnd();
+    */
+/////
+
+    glFlush ();
+}
+void myInit (void)
+{
+    glClearColor(0.0, 1.0, 1.0, 0.0);
+    /*glColor3f(0.0f, 0.0f, 0.0f);
+    glPointSize(40.0);*/
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, 1024.0, 0.0, 768.0);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+void update(int value)
+{
+
+    glutPostRedisplay(); //Tell GLUT that the display has changed
+
+    //Tell GLUT to call update again in 25 milliseconds
+    glutTimerFunc(25, update, 0);
+}
+
+main(int argc, char** argv)
+{
+
+    init() ;
+    glutInit(&argc, argv);
+    glutInitDisplayMode ( GLUT_DEPTH | GLUT_SINGLE | GLUT_RGB);
+    glutInitWindowSize (theGlutWindowWidth, theGlutWindowHeight); // width
+    glutInitWindowPosition (100, 150);
+    glutCreateWindow ("My First Attempt");
+    glutDisplayFunc(myDisplay);
+    glutMouseFunc(mouse);
+    glutPassiveMotionFunc(mouseMotion);
+    myInit ();
+    glutMainLoop();
+}
